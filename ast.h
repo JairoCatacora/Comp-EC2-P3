@@ -171,6 +171,24 @@ public:
     int accept(Visitor* visitor);
 };
 
+class FcallStm: public Stm {
+public:
+    FcallExp* fcall;
+    FcallStm();
+    ~FcallStm();
+    int accept(Visitor* visitor);
+};
+
+class ForStm: public Stm {
+public:
+    Stm* init;
+    Exp* cond;
+    Stm* inc;
+    Body* b;
+    ForStm(Stm* init, Exp* cond, Stm* inc, Body* body);
+    ~ForStm();
+    int accept(Visitor* visitor);
+};
 
 
 #endif // AST_H

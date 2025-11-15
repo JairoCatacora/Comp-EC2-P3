@@ -24,6 +24,7 @@ public:
     Exp* parseE();
     Exp* parseT();
     Exp* parseF();
+    Stm* parseForInit();
 };
 
 #endif // PARSER_H      

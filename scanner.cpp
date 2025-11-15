@@ -70,6 +70,9 @@ Token* Scanner::nextToken() {
         else if (lexema=="endfun") return new Token(Token::ENDFUN, input, first, current - first);
         else if (lexema=="return") return new Token(Token::RETURN, input, first, current - first);
 
+        else if (lexema=="for") return new Token(Token::FOR, input, first, current - first);
+        else if (lexema=="endfor") return new Token(Token::ENDFOR, input, first, current - first);
+
         else return new Token(Token::ID, input, first, current - first);
     }
     // Operadores

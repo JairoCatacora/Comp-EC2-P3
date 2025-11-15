@@ -39,7 +39,9 @@ public:
         VAR,
         COMA,
         TRUE,
-        FALSE
+        FALSE,
+        FOR,
+        ENDFOR
     };
 
     // Atributos

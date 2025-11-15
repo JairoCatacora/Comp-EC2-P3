@@ -60,6 +60,14 @@ int ReturnStm::accept(Visitor* visitor){
     return visitor->visit(this);
 }
 
+int FcallStm::accept(Visitor* visitor){
+    return visitor->visit(this);
+}
+
+int ForStm::accept(Visitor* visitor){
+    return visitor->visit(this);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -178,9 +186,11 @@ int GenCodeVisitor::visit(IfStm* stm) {
     stm->condition->accept(this);
     out << " cmpq $0, %rax"<<endl;
     out << " je else_" << label << endl;
-   stm->then->accept(this);
+    int var = offset;
+    stm->then->accept(this);
     out << " jmp endif_" << label << endl;
     out << " else_" << label << ":"<< endl;
+    offset = var;
     if (stm->els) stm->els->accept(this);
     out << "endif_" << label << ":"<< endl;
     return 0;
@@ -249,6 +259,30 @@ int GenCodeVisitor::visit(FcallExp* exp) {
     return 0;
 }
 
+int GenCodeVisitor::visit(FcallStm* stm) {
+    vector<std::string> argRegs = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
+    int size = stm->fcall->argumentos.size();
+    for (int i = 0; i < size; i++) {
+        stm->fcall->argumentos[i]->accept(this);
+        out << " mov %rax, " << argRegs[i] <<endl;
+    }
+    out << "call " << stm->fcall->nombre << endl;
+    return 0;
+}
+
+int GenCodeVisitor::visit(ForStm* stm) {
+    stm->init->accept(this);
+    int label = labelcont++;
+    out << "for_" << label << ":"<<endl;
+    stm->cond->accept(this);
+    out << " cmpq $0, %rax" << endl;
+    out << " je endfor_" << label << endl;
+    stm->b->accept(this);
+    stm->inc->accept(this);
+    out << " jmp for_" << label << endl;
+    out << "endfor_" << label << ":"<< endl;
+    return 0;
+}
 
 int TypeCheckerVisitor::type(Program* program){
     for(auto i:program->fdlist){
@@ -324,5 +358,16 @@ int TypeCheckerVisitor::visit(FcallExp* fcall) {
     return 0;
 }
 int TypeCheckerVisitor::visit(ReturnStm* r) {
+    return 0;
+}
+
+int TypeCheckerVisitor::visit(FcallStm* fstm) {
+    return 0;
+}
+
+int TypeCheckerVisitor::visit(ForStm* fstm) {
+    fstm->init->accept(this);
+    fstm->b->accept(this);
+    fstm->inc->accept(this);
     return 0;
 }

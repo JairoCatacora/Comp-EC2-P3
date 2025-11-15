@@ -21,9 +21,11 @@ main:
  movq %rsp, %rbp
  subq $0, %rsp
  movq $3, %rax
- movq %rax, 0(%rbp)
+ mov %rax, %rdi
+call imprimir
  movq $4, %rax
- movq %rax, 0(%rbp)
+ mov %rax, %rdi
+call imprimir
  movq $0, %rax
  jmp .end_main
 .end_main:

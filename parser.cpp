@@ -138,9 +138,24 @@ Stm* Parser::parseStm() {
     Body* fb = nullptr;
     if(match(Token::ID)){
         variable = previous->text;
-        match(Token::ASSIGN);
-        e = parseCE();
-        return new AssignStm(variable,e);
+        if (match(Token::ASSIGN)) {
+            e = parseCE();
+            return new AssignStm(variable,e);
+        }
+        else if (match(Token::LPAREN)) {
+            FcallStm* fstm = new FcallStm();
+            FcallExp* fcall = new FcallExp();
+            fcall->nombre = variable;
+            if(!check(Token::RPAREN)) {
+                fcall->argumentos.push_back(parseCE());
+                while(match(Token::COMA)) {
+                    fcall->argumentos.push_back(parseCE());
+                }
+            }
+            match(Token::RPAREN);
+            fstm->fcall = fcall;
+            return fstm;
+        }
     }
     else if(match(Token::PRINT)){
         match(Token::LPAREN);
@@ -155,7 +170,7 @@ Stm* Parser::parseStm() {
         match(Token::RPAREN);
         return r;
     }
-else if (match(Token::IF)) {
+    else if (match(Token::IF)) {
         e = parseCE();
         if (!match(Token::THEN)) {
             cout << "Error: se esperaba 'then' después de la expresión." << endl;
@@ -184,10 +199,34 @@ else if (match(Token::IF)) {
         }
         a = new WhileStm(e, tb);
     }
+    else if (match(Token::FOR)) {
+        match(Token::LPAREN);
+        Stm* init = parseForInit();
+        match(Token::SEMICOL);
+        e = parseCE();
+        match(Token::SEMICOL);
+        Stm* inc = parseStm();
+        match(Token::RPAREN);
+        tb = parseBody();
+        match(Token::ENDFOR);
+        match(Token::SEMICOL);
+        a = new ForStm(init, e, inc, tb);
+    }
     else{
         throw runtime_error("Error sintáctico");
     }
     return a;
+}
+
+Stm* Parser::parseForInit() {
+    match(Token::ID);
+    match(Token::ID);
+    string var = previous->text;
+    match(Token::ASSIGN);
+    Exp* initValue = parseCE();
+    match(Token::SEMICOL);
+    Stm* init = new AssignStm(var, initValue);
+    return init;
 }
 
 Exp* Parser::parseCE() {

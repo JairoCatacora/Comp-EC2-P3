@@ -38,6 +38,8 @@ public:
     virtual int visit(FcallExp* fcall) = 0;
     virtual int visit(ReturnStm* r) = 0;
     virtual int visit(FunDec* fd) = 0;
+    virtual int visit(FcallStm* fstm) = 0;
+    virtual int visit(ForStm* fstm) = 0;
 };
 
 
@@ -60,6 +62,8 @@ public:
     int visit(FcallExp* fcall) override;
     int visit(ReturnStm* r) override;
     int visit(FunDec* fd) override;
+    int visit(FcallStm* fstm) override;
+    int visit(ForStm* fstm) override;
 };
 
 class GenCodeVisitor : public Visitor {
@@ -89,6 +93,8 @@ public:
     int visit(FcallExp* fcall) override;
     int visit(ReturnStm* r) override;
     int visit(FunDec* fd) override;
+    int visit(FcallStm* fstm) override;
+    int visit(ForStm* fstm) override;
 };
 
 

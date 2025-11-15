@@ -75,4 +75,8 @@ Body::Body(){
 
 Body::~Body(){}
 
+FcallStm::FcallStm() {}
+FcallStm::~FcallStm() {}
 
+ForStm::ForStm(Stm* init, Exp* cond, Stm* inc, Body* body): init(init), cond(cond), inc(inc), b(body) {}
+ForStm::~ForStm() {}
